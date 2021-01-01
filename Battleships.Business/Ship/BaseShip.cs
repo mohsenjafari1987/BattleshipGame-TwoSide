@@ -78,7 +78,8 @@ namespace Battleships.Business.Ship
                 List<Tuple<char, int>> tempList = new List<Tuple<char, int>>();
                 for (char i = selectedPoint.Item1; i <= endPoint.Item1; i++)
                 {
-                    if (board.Any(r => r.Position.Equals(new Tuple<char, int>(i, selectedPoint.Item2)) && r.ShipType is null))
+                    var square = new Tuple<char, int>(i, selectedPoint.Item2);
+                    if (board.Any(r => r.Position.Equals(square) && r.ShipType is null && !AllShips.Any(r => r.Any(rr => rr.Equals(square)))))
                     {
                         tempList.Add(new Tuple<char, int>(i, selectedPoint.Item2));
                     }
@@ -104,7 +105,8 @@ namespace Battleships.Business.Ship
                 List<Tuple<char, int>> tempList = new List<Tuple<char, int>>();
                 for (char i = selectedPoint.Item1; i >= endPoint.Item1; i--)
                 {
-                    if (board.Any(r => r.Position.Equals(new Tuple<char, int>(i, selectedPoint.Item2)) && r.ShipType is null))
+                    var square = new Tuple<char, int>(i, selectedPoint.Item2);
+                    if (board.Any(r => r.Position.Equals(square) && r.ShipType is null && !AllShips.Any(r => r.Any(rr => rr.Equals(square)))))
                     {
                         tempList.Add(new Tuple<char, int>(i, selectedPoint.Item2));
                     }
@@ -129,7 +131,8 @@ namespace Battleships.Business.Ship
                 List<Tuple<char, int>> tempList = new List<Tuple<char, int>>();
                 for (int i = selectedPoint.Item2; i >= endPoint.Item2; i--)
                 {
-                    if (board.Any(r => r.Position.Equals(new Tuple<char, int>(selectedPoint.Item1, i)) && r.ShipType is null))
+                    var square = new Tuple<char, int>(selectedPoint.Item1, i);
+                    if (board.Any(r => r.Position.Equals(square) && r.ShipType is null && !AllShips.Any(r => r.Any(rr => rr.Equals(square)))))
                     {
                         tempList.Add(new Tuple<char, int>(selectedPoint.Item1, i));
                     }
@@ -153,7 +156,8 @@ namespace Battleships.Business.Ship
                 List<Tuple<char, int>> tempList = new List<Tuple<char, int>>();
                 for (int i = selectedPoint.Item2; i <= endPoint.Item2; i++)
                 {
-                    if (board.Any(r => r.Position.Equals(new Tuple<char, int>(selectedPoint.Item1, i)) && r.ShipType is null))
+                    var square = new Tuple<char, int>(selectedPoint.Item1, i);
+                    if (board.Any(r => r.Position.Equals(square) && r.ShipType is null && !AllShips.Any(r => r.Any(rr => rr.Equals(square)))))
                     {
                         tempList.Add(new Tuple<char, int>(selectedPoint.Item1, i));
                     }

@@ -11,73 +11,91 @@ namespace Battleships.App
 {
     class Program
     {
+        public static WrapperBattleshipBoard wprBattleshipBoard { get; set; }
         static void Main(string[] args)
         {
-            WrapperBattleshipBoard wprBattleshipBoard = new WrapperBattleshipBoard();
+            wprBattleshipBoard = new WrapperBattleshipBoard();
 
             wprBattleshipBoard.BuildShips();
 
             Console.WriteLine("I built 3 ships, Are you ready?");
 
-
             while (true)
             {
-                var userInput = GetPositionFromUser();
-                var squareDetail = wprBattleshipBoard.GetSquareFromComputerOcean(userInput);
-
-                Console.WriteLine($"Result of your choice: {squareDetail.ShipType.GetMessageFromShipType()}");
-
-                if (squareDetail.ShipType is ShipType.Destroyers || squareDetail.ShipType is ShipType.Battleship)
-                {
-                    wprBattleshipBoard.SetRedFlagInComputerOcean(squareDetail.Position);
-                    var destoyed = wprBattleshipBoard.GetComputerSinkShipCount(squareDetail.ShipType.Value);
-                    if (destoyed > 0)
-                    {
-                        Console.WriteLine($"You sunk the ship type= {squareDetail.ShipType}- count= {destoyed}");
-
-                        if (wprBattleshipBoard.UserWinnerCheck())
-                        {
-                            Console.WriteLine("You won the game");
-                            break;
-                        }
-                    }
-                }
-
-
-                var position = wprBattleshipBoard.SelectSquare();
-
-                Console.WriteLine($"This is my choice: {position}");                
-
-                var positionStatus = GetStatusFromUser();
-
-                if (positionStatus is PositionStatus.Red)
-                {                    
-                    var shipType = GetShipTypeFromUser();
-
-                    wprBattleshipBoard.FillRedSquare(position, shipType);
-
-                    var sinkStatus = wprBattleshipBoard.CheckOpponentShipSink();
-                    if (sinkStatus is SinkStatus.NotSink || sinkStatus is SinkStatus.Sink)
-                    {
-                        Console.WriteLine(sinkStatus.GetMessageFromSinkStatus());
-                        wprBattleshipBoard.Process(position, positionStatus, shipType, sinkStatus == SinkStatus.Sink);
-                    }
-                    else //SinkStatus.SinkPossible
-                    {                        
-                        var isSink = GetTrueFalseFromUser();
-                        wprBattleshipBoard.Process(position, positionStatus, shipType, isSink);
-                    }
-                }
-                else
-                {
-                    wprBattleshipBoard.FillWhiteSquare(position);
-                    wprBattleshipBoard.Process(position, PositionStatus.White, null, false);
-                }
+                if (UserPlay())
+                    break;
+                
+                if (ComputerPlay())
+                    break;
             }
 
-            Console.WriteLine("Computer destroyed all your ships...");
             Console.ReadKey();
         }
+        static bool UserPlay()
+        {
+            var userInput = GetPositionFromUser();
+            var squareDetail = wprBattleshipBoard.GetSquareFromComputerOcean(userInput);
+
+            Console.WriteLine($"Result of your choice: {squareDetail.ShipType.GetMessageFromShipType()}");
+
+            if (squareDetail.ShipType is ShipType.Destroyers || squareDetail.ShipType is ShipType.Battleship)
+            {
+                wprBattleshipBoard.SetRedFlagInComputerOcean(squareDetail.Position);
+                var destoyed = wprBattleshipBoard.GetComputerSinkShipCount(squareDetail.ShipType.Value);
+                if (destoyed > 0)
+                {
+                    Console.WriteLine($"You sunk the ship type= {squareDetail.ShipType}- count= {destoyed}");
+
+                    if (wprBattleshipBoard.UserWinnerCheck())
+                    {
+                        Console.WriteLine("You won the game");
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        static bool ComputerPlay()
+        {
+            var position = wprBattleshipBoard.SelectSquare();
+
+            Console.WriteLine($"This is my choice: {position}");
+
+            var positionStatus = GetStatusFromUser();
+
+            if (positionStatus is PositionStatus.Red)
+            {
+                var shipType = GetShipTypeFromUser();
+
+                wprBattleshipBoard.FillRedSquare(position, shipType);
+
+                var sinkStatus = wprBattleshipBoard.CheckOpponentShipSink();
+                if (sinkStatus is SinkStatus.NotSink || sinkStatus is SinkStatus.Sink)
+                {
+                    Console.WriteLine(sinkStatus.GetMessageFromSinkStatus());
+                    wprBattleshipBoard.Process(position, positionStatus, shipType, sinkStatus == SinkStatus.Sink);
+                }
+                else //SinkStatus.SinkPossible
+                {
+                    var isSink = GetTrueFalseFromUser();
+                    wprBattleshipBoard.Process(position, positionStatus, shipType, isSink);
+                }
+
+                if (wprBattleshipBoard.ComputerWinnerCheck())
+                {
+                    Console.WriteLine("Computer won the game");
+                    return true;
+                }
+            }
+            else
+            {
+                wprBattleshipBoard.FillWhiteSquare(position);
+                wprBattleshipBoard.Process(position, PositionStatus.White, null, false);
+            }
+            return false;
+        }
+
 
         static Tuple<char, int> GetPositionFromUser()
         {

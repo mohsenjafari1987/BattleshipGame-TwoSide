@@ -19,7 +19,7 @@ namespace Battleships.Business.Core
             BattleshipBoard = new BattleshipBoard();
         }
 
-        public bool PlayerWinnerCheck()
+        public bool ComputerWinnerCheck()
         {
             return BattleshipBoard.OpponentDestroyed == WinnerCount;
         }
