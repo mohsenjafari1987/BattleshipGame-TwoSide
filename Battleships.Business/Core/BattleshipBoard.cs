@@ -12,8 +12,8 @@ namespace Battleships.Business.Core
 
     public class BattleshipBoard
     {
+        #region Properties
         private List<Square> ComputerOcean { get; set; }
-
         private List<Square> OpponentOcean { get; set; }
         private int opponentDestroyed { get; set; }
         public int OpponentDestroyed
@@ -23,9 +23,10 @@ namespace Battleships.Business.Core
                 return opponentDestroyed;
             }
         }
-
         private Square CurrentRedSquare { get; set; }
+        #endregion
 
+        #region constractor
         public BattleshipBoard()
         {
             OpponentOcean = new List<Square>();
@@ -46,12 +47,61 @@ namespace Battleships.Business.Core
                 }
             }
         }
+        #endregion
 
+        #region UserSideMethods
+        public void BuildShips(ShipType shipType)
+        {
+            void setInBoard(List<List<Tuple<char, int>>> ships, ShipType shipType)
+            {
+                ships.ForEach(ship =>
+                {
+                    ship.ForEach(position =>
+                    {
+                        ComputerOcean.Single(r => r.Position.Equals(position)).ShipType = shipType;
+                    });
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
+                });
+            }
+
+            var ships = ShipFactory.GetInstance(shipType).Build(ComputerOcean);
+            setInBoard(ships, shipType);
+
+        }
+
+        public Square GetSquareFromComputerOcean(Tuple<char, int> position)
+        {
+            return ComputerOcean.Single(r => r.Position.Equals(position));
+        }
+
+        public void SetRedSquareComputerOcean(Tuple<char, int> position)
+        {
+            var square = GetSquareFromComputerOcean(position);
+            square.Status = PositionStatus.Red;
+        }
+
+        public int GetRedSquareCount(List<Tuple<char, int>> shipSquares)
+        {
+
+            return ComputerOcean.Where(r => r.Status is PositionStatus.Red && shipSquares.Any(p => r.Position.Equals(p))).Count();
+
+        }
+
+        public int GetComputerSinkShipCount(ShipType shipType)
+        {
+            int count = 0;
+            ShipFactory.GetInstance(shipType).AllShips.ForEach(ship =>
+            {
+                if (GetRedSquareCount(ship) == ship.Count)
+                {
+                    count++;
+                }
+            });
+            return count;
+        }
+        #endregion
+
+        #region ComputerSideMethods
         public Tuple<char, int> SelectSquare()
         {
 
@@ -124,62 +174,6 @@ namespace Battleships.Business.Core
             CurrentRedSquare = null;
             ship.Sinked();
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="shipType"></param>
-        /// <returns></returns>
-
-        public void BuildShips(ShipType shipType)
-        {
-            void setInBoard(List<List<Tuple<char, int>>> ships, ShipType shipType)
-            {
-                ships.ForEach(ship =>
-                {
-                    ship.ForEach(position =>
-                    {
-                        ComputerOcean.Single(r => r.Position.Equals(position)).ShipType = shipType;
-                    });
-
-                });
-            }
-
-            var ships = ShipFactory.GetInstance(shipType).Build(ComputerOcean);
-            setInBoard(ships, shipType);
-
-        }
-
-        public Square GetSquareFromComputerOcean(Tuple<char, int> position)
-        {
-            return ComputerOcean.Single(r => r.Position.Equals(position));
-        }
-
-        public void SetRedSquareComputerOcean(Tuple<char, int> position)
-        {
-            var square = GetSquareFromComputerOcean(position);
-            square.Status = PositionStatus.Red;
-        }
-
-        public int GetRedSquareCount(List<Tuple<char, int>> shipSquares)
-        {
-
-            return ComputerOcean.Where(r => r.Status is PositionStatus.Red && shipSquares.Any(p => r.Position.Equals(p))).Count();
-
-        }
-
-        public int GetComputerSinkShipCount(ShipType shipType)
-        {
-            int count = 0;
-            ShipFactory.GetInstance(shipType).AllShips.ForEach(ship =>
-            {
-                if (GetRedSquareCount(ship) == ship.Count)
-                {
-                    count++;
-                }
-            });
-            return count;
-        }
-
+        #endregion
     }
 }

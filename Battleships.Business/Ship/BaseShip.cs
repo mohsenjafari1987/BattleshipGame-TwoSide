@@ -13,9 +13,8 @@ namespace Battleships.Business.Ship
         public int Size { get; set; }
         public int Quantity { get; set; }
         protected List<List<Tuple<char, int>>> Ships { get; set; }
-        public List<List<Tuple<char, int>>> AllShips => Ships;
+        public List<List<Tuple<char, int>>> AllShips { get { return Ships; } }
         public List<List<Square>> Posibilities { get; set; }
-
         public List<List<Square>> CurrentPosibilities
         {
             get

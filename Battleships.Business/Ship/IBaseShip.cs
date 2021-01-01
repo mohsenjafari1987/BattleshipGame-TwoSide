@@ -15,8 +15,7 @@ namespace Battleships.Business.Ship
         public int Quantity { get; set; }
         public List<List<Tuple<char, int>>> AllShips { get; }
         public SinkStatus CheckSink(List<Square> squares);
-        public Tuple<char, int> FindNextSquer(List<Square> SquareBoard, Tuple<char, int> currentPosition);
-        public List<List<Square>> GeneratePosibilities(List<Square> SquareBoard, Tuple<char, int> currentPosition);
+        public Tuple<char, int> FindNextSquer(List<Square> SquareBoard, Tuple<char, int> currentPosition);        
         public void RefreshPosibilities(Tuple<char, int> position, PositionStatus positionStatus, bool isSinked, ShipType? shipType);
         public void Sinked();
         public List<List<Tuple<char, int>>> Build(List<Square> board);

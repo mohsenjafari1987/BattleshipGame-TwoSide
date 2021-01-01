@@ -10,19 +10,20 @@ namespace Battleships.Business.Core
 {
     public class WrapperBattleshipBoard
     {
+        #region Properties
         private BattleshipBoard BattleshipBoard { get; set; }
 
-        private const int WinnerCount = 3;        
+        private const int WinnerCount = 3;
+        #endregion
 
+        #region Constractor
         public WrapperBattleshipBoard()
         {
             BattleshipBoard = new BattleshipBoard();
         }
+        #endregion
 
-        public bool ComputerWinnerCheck()
-        {
-            return BattleshipBoard.OpponentDestroyed == WinnerCount;
-        }
+        #region UserSideMethods
         public void BuildShips()
         {
             BattleshipBoard.BuildShips(ShipType.Destroyers);
@@ -31,9 +32,9 @@ namespace Battleships.Business.Core
         }
         public bool UserWinnerCheck()
         {
-            return GetComputerSinkShipCount() == WinnerCount;
+            return GetComputerOceanSinkShipCount() == WinnerCount;
         }
-        public int GetComputerSinkShipCount()
+        public int GetComputerOceanSinkShipCount()
         {
             int count = 0;
 
@@ -42,7 +43,7 @@ namespace Battleships.Business.Core
 
             return count;
         }
-        public int GetComputerSinkShipCount(ShipType shipType)
+        public int GetComputerOceanSinkShipCount(ShipType shipType)
         {
             return BattleshipBoard.GetComputerSinkShipCount(shipType);
         }
@@ -53,10 +54,14 @@ namespace Battleships.Business.Core
         public void SetRedFlagInComputerOcean(Tuple<char, int> position)
         {
             BattleshipBoard.SetRedSquareComputerOcean(position);
-        }       
+        }
+        #endregion
 
-
-
+        #region ComputerSideMethods
+        public bool ComputerWinnerCheck()
+        {
+            return BattleshipBoard.OpponentDestroyed == WinnerCount;
+        }
         public void FillRedSquare(Tuple<char, int> position, ShipType? shipType)
         {
             BattleshipBoard.FillSquare(position, PositionStatus.Red, shipType);
@@ -74,10 +79,16 @@ namespace Battleships.Business.Core
         {
             return BattleshipBoard.CheckOpponentShipSink();
         }
-        public void Process(Tuple<char, int> position, PositionStatus positionStatus, ShipType? shipType, bool isSink)
+        public void ProcessRedSquare(Tuple<char, int> position, PositionStatus positionStatus, ShipType shipType, bool isSink)
         {
             BattleshipBoard.Process(position, positionStatus, shipType, isSink);
-        }       
+        }
+        public void ProcessWhiteSquare(Tuple<char, int> position)
+        {
+            BattleshipBoard.Process(position, PositionStatus.White, null, false);
+        }
+        #endregion
+
 
     }
 }

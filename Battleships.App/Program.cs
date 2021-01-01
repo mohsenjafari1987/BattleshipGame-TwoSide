@@ -41,7 +41,7 @@ namespace Battleships.App
             if (squareDetail.ShipType is ShipType.Destroyers || squareDetail.ShipType is ShipType.Battleship)
             {
                 wprBattleshipBoard.SetRedFlagInComputerOcean(squareDetail.Position);
-                var destoyed = wprBattleshipBoard.GetComputerSinkShipCount(squareDetail.ShipType.Value);
+                var destoyed = wprBattleshipBoard.GetComputerOceanSinkShipCount(squareDetail.ShipType.Value);
                 if (destoyed > 0)
                 {
                     Console.WriteLine($"You sunk the ship type= {squareDetail.ShipType}- count= {destoyed}");
@@ -74,12 +74,12 @@ namespace Battleships.App
                 if (sinkStatus is SinkStatus.NotSink || sinkStatus is SinkStatus.Sink)
                 {
                     Console.WriteLine(sinkStatus.GetMessageFromSinkStatus());
-                    wprBattleshipBoard.Process(position, positionStatus, shipType, sinkStatus == SinkStatus.Sink);
+                    wprBattleshipBoard.ProcessRedSquare(position, positionStatus, shipType, sinkStatus == SinkStatus.Sink);
                 }
                 else //SinkStatus.SinkPossible
                 {
                     var isSink = GetTrueFalseFromUser();
-                    wprBattleshipBoard.Process(position, positionStatus, shipType, isSink);
+                    wprBattleshipBoard.ProcessRedSquare(position, positionStatus, shipType, isSink);
                 }
 
                 if (wprBattleshipBoard.ComputerWinnerCheck())
@@ -91,7 +91,7 @@ namespace Battleships.App
             else
             {
                 wprBattleshipBoard.FillWhiteSquare(position);
-                wprBattleshipBoard.Process(position, PositionStatus.White, null, false);
+                wprBattleshipBoard.ProcessWhiteSquare(position);
             }
             return false;
         }
